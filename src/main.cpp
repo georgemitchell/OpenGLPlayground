@@ -7,7 +7,10 @@
 #include <GL/glew.h>
 
 // GLFW
+//#include <OpenGL/gl3.h>
 #include <GLFW/glfw3.h>
+
+#include "Shader.h"
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
@@ -58,9 +61,15 @@ int main()
 
     glfwSetKeyCallback(window, key_callback);
 
+    // Set this to true so GLEW knows to use a modern approach to retrieving function pointers and extensions
+    glewExperimental = GL_TRUE;
+    // Initialize GLEW to setup the OpenGL Function pointers
+    glewInit();
+
     // Build and compile our shader program
 	// Vertex shader
-	GLint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	GLint vertexShader;
+	vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
 	glCompileShader(vertexShader);
 	// Check for compile time errors
@@ -72,6 +81,7 @@ int main()
 		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
 		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
+	/*
 	// Fragment shader
 	GLint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
@@ -96,6 +106,8 @@ int main()
 	}
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
+	*/
+	Shader ourShader("/Users/george/git/OpenGLPlayground/src/shaders/shader.vs", "/Users/george/git/OpenGLPlayground/src/shaders/shader.frag");
 
 	GLfloat vertices[] = {
 	     0.5f,  0.5f, 0.0f,  // Top Right
@@ -161,7 +173,8 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// Draw our first triangle
-		glUseProgram(shaderProgram);
+		//glUseProgram(shaderProgram);
+		ourShader.Use();
 
 		// Update the uniform color
 		/*GLfloat timeValue = glfwGetTime();
